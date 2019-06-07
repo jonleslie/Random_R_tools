@@ -1,0 +1,162 @@
+---
+title: "R packages for summarising data - part 2"
+output: html_notebook
+---
+
+From:
+https://dabblingwithdata.wordpress.com/2018/02/26/r-packages-for-summarising-data-part-2/?utm_content=buffer77b34&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer
+
+(part 1: https://dabblingwithdata.wordpress.com/2018/01/02/my-favourite-r-package-for-summarising-data/ )
+
+# R packages for summarising data
+
+```{r}
+library(tidyverse)
+library(knitr)
+data(mtcars)
+```
+
+## Base R
+
+```{r}
+summary(mtcars)
+```
+
+```{r}
+by(mtcars, mtcars$cyl, summary)
+```
+
+## knitr
+
+```{r}
+kable(mtcars)
+```
+
+So, can we improve on that effort by using libraries that are not automatically installed as part of base R? I tested 5 options. Inevitably, there are many more possibilities, so please feel free to write in if you think I missed an even better one.
+
+- describe, from the Hmisc package
+- stat.desc from pastecs
+- describe from psych
+- skim from skimr
+- descr and dfSummary from summarytools
+
+# Other options
+
+## describe, from the Hmisc package
+
+```{r}
+library(Hmisc)
+Hmisc::describe(mtcars)
+```
+
+## stat.desc, from the pastecs package
+```{r}
+library(pastecs)
+stat.desc(mtcars)
+```
+
+## describe and describeBy, from the psych package
+```{r}
+library(psych)
+describe(mtcars)
+```
+
+```{r}
+describeBy(mtcars, as.factor(mtcars$cyl))
+```
+
+```{r}
+describeBy(mtcars, mtcars$cyl, mat = TRUE)
+```
+
+## skim, from the skimr package
+```{r}
+library(skimr)
+skim(mtcars)
+```
+
+```{r}
+library(dplyr)
+library(skimr)
+mtcars %>% 
+  group_by(cyl) %>% 
+  skim()
+
+```
+
+
+## descr and dfSummary, from the summarytools package
+```{r}
+library(summarytools)
+summarytools::descr(mtcars)
+```
+
+```{r}
+dfSummary(mtcars)
+```
+
+```{r}
+view(dfSummary(mtcars))
+```
+
+
+# R packages for summarising data – part 2
+
+Now then, onto some new packages! I collated the many kind suggestions, and had a look at:
+
+- CreateTableOne, from the tableone package
+- desctable from desctable
+- ggpairs from GGally
+- ds_summary_stats from Descriptr
+
+I was also going to look at the CompareGroups package, but unfortunately it had apparently been removed from CRAN recently because “check problems were not corrected in time” apparently. Maybe I’ll try again in future.
+
+## CreateTableOne, from the tableone package
+```{r}
+library(tableone)
+CreateTableOne(data = mtcars)
+```
+
+```{r}
+CreateTableOne(strata = "cyl", data = mtcars)
+```
+
+You might note above that not only do you get the summary segmented by group, but you also automatically get p values from a statistical hypothesis  test as to whether the groups differ from each other. By default these are either chi-squared for categorical variables or ANOVA for continuous variables. You can add parameters to use non-parametric or exact tests though if you feel they are more appropriate. This also changes up the summary stats that are shown for numeric variables – which also happens if you apply the nonnormal parameter even without stratification.
+
+## desctable, from the desctable package
+```{r}
+library(desctable)
+desctable(mtcars)
+```
+
+```{r}
+mtcars %>% 
+  group_by(cyl) %>% 
+  desctable()
+```
+
+Note also the nice way that it has picked an appropriate statistical test to automatically test for significant differences between groups. Here it picked the Kruskall-Wallis test for the numeric fields as the data was detected as being non-normally distributed.
+
+## ggpairs, from the GGally package
+```{r}
+library(GGally)
+ggpairs(mtcars)
+```
+
+```{r}
+# ggpairs(mtcars, mapping = aes(colour = as.factor(cyl)))
+mtcars %>% 
+  mutate(Cyl = as.factor(cyl)) %>% 
+  ggpairs(aes(colour = Cyl))
+```
+
+## ds_summary_stats from descriptr
+```{r}
+library(descriptr)
+ds_summary_stats(mtcars$disp)
+```
+
+```{r}
+ds_screener(mtcars)
+```
+
