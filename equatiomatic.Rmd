@@ -1,0 +1,15 @@
+---
+title: "Equatiomatic"
+output: html_notebook
+---
+
+```{r results="asis"}
+library(equatiomatic)
+
+# Fit a simple model
+mod1 <- lm(mpg ~ cyl + disp, mtcars)
+
+# Give the results to extract_eq
+extract_eq(mod1)
+```
+
